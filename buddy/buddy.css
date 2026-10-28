@@ -1,0 +1,139 @@
+/* ===== Анимированный человечек ===== */
+.vbuddy {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 500 / 1390;
+  user-select: none;
+  -webkit-user-select: none;
+  --bubble-bg: #ffffff;
+  --bubble-ink: #1b2340;
+}
+.vbuddy__stage {
+  position: absolute;
+  left: 0; top: 0;
+  width: 500px; height: 1390px;
+  transform-origin: 0 0;
+  transform: scale(var(--k, 0.6));
+}
+.vbuddy__lean {
+  position: absolute;
+  left: 0; top: 260px;
+  width: 500px; height: 1130px;
+  transform-origin: 250px 1110px;
+  will-change: transform;
+}
+.vbuddy__shadow {
+  position: absolute;
+  left: 70px; top: 1355px;
+  width: 360px; height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(10, 20, 50, .35), rgba(10, 20, 50, 0));
+}
+.vbuddy img { display: block; pointer-events: none; -webkit-user-drag: none; }
+.vbuddy__abs { position: absolute; }
+.vbuddy__body { left: 0; top: 0; width: 500px; height: 1130px; }
+.vbuddy__head {
+  position: absolute; left: 0; top: 0; width: 500px; height: 1130px;
+  transform-origin: 255px 472px;
+  will-change: transform;
+}
+.vbuddy__hit {
+  position: absolute; left: 30px; top: 0; width: 440px; height: 1110px;
+  cursor: pointer; border-radius: 40% 40% 10% 10%;
+}
+
+/* глаз */
+.vbuddy__eye {
+  position: absolute;
+  overflow: hidden;
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.vbuddy__iris {
+  position: absolute; width: 54px; height: 54px;
+  will-change: transform;
+}
+.vbuddy__lid {
+  position: absolute; left: -45%; width: 190%; height: 200%;
+  border-radius: 50%;
+  will-change: transform;
+}
+.vbuddy__lid--up {
+  top: -200%;
+  background: linear-gradient(to bottom,
+    #bb6c50 50%, #d98563 64%, #e79372 80%, #d27e5f 94%, #6a3022 99%, #4a2016 100%);
+  box-shadow: 0 2px 2px rgba(60, 25, 18, .55), 0 5px 6px -2px rgba(60, 25, 18, .25);
+}
+.vbuddy__lid--low {
+  top: 100%;
+  background: linear-gradient(to top, #ea9675 0%, #ea9675 88%, #d98767 97%, #b9674e 100%);
+  box-shadow: 0 -2px 2px -1px rgba(70, 30, 20, .35);
+}
+.vbuddy__eyeshade {
+  position: absolute; inset: 0;
+  background: radial-gradient(closest-side, rgba(0,0,0,0) 62%, rgba(90, 40, 30, .30) 100%);
+  pointer-events: none;
+}
+
+.vbuddy__brow { will-change: transform; transition: transform .28s cubic-bezier(.3,1.4,.5,1); }
+.vbuddy__mouth { opacity: 0; transition: opacity .18s ease; }
+.vbuddy__mouth.is-on { opacity: 1; }
+
+/* облачко с мыслями */
+.vbuddy__think {
+  position: absolute;
+  left: 150px; top: 0;
+  width: 340px; height: 225px;
+  display: flex; align-items: flex-end;
+  pointer-events: none;
+}
+.vbuddy__cloud {
+  position: relative;
+  width: 100%;
+  padding: 30px 34px;
+  background: var(--bubble-bg);
+  border-radius: 70px;
+  color: var(--bubble-ink);
+  font: 700 27px/1.25 "Nunito", "Segoe UI", system-ui, sans-serif;
+  text-align: center;
+  filter: drop-shadow(0 6px 10px rgba(10, 20, 60, .22));
+  transform-origin: 18% 120%;
+  transform: scale(.4); opacity: 0;
+  transition: transform .35s cubic-bezier(.3,1.5,.5,1), opacity .2s ease;
+}
+.vbuddy__cloud i {
+  position: absolute; border-radius: 50%; background: var(--bubble-bg);
+  z-index: -1;
+}
+.vbuddy__cloud i:nth-child(1) { width: 110px; height: 110px; left: 4%;  top: -34px; }
+.vbuddy__cloud i:nth-child(2) { width: 140px; height: 140px; left: 30%; top: -48px; }
+.vbuddy__cloud i:nth-child(3) { width: 105px; height: 105px; right: 6%; top: -30px; }
+.vbuddy__cloud i:nth-child(4) { width: 90px;  height: 90px;  right: -18px; top: 30%; }
+.vbuddy__cloud i:nth-child(5) { width: 90px;  height: 90px;  left: -18px; top: 26%; }
+.vbuddy__cloud i:nth-child(6) { width: 120px; height: 100px; left: 40%; bottom: -30px; }
+.vbuddy__text { position: relative; min-height: 1.25em; }
+.vbuddy__dot {
+  position: absolute; border-radius: 50%; background: var(--bubble-bg);
+  filter: drop-shadow(0 4px 6px rgba(10, 20, 60, .2));
+  transform: scale(0); transition: transform .25s cubic-bezier(.3,1.6,.5,1);
+}
+.vbuddy__dot--1 { width: 34px; height: 34px; left: 222px; top: 234px; }
+.vbuddy__dot--2 { width: 22px; height: 22px; left: 204px; top: 266px; }
+.vbuddy__dot--3 { width: 14px; height: 14px; left: 194px; top: 289px; }
+.vbuddy.is-thinking .vbuddy__cloud { transform: scale(1); opacity: 1; }
+.vbuddy.is-thinking .vbuddy__dot--3 { transform: scale(1); transition-delay: 0s; }
+.vbuddy.is-thinking .vbuddy__dot--2 { transform: scale(1); transition-delay: .08s; }
+.vbuddy.is-thinking .vbuddy__dot--1 { transform: scale(1); transition-delay: .16s; }
+.vbuddy .vbuddy__dot { transition-delay: 0s; }
+
+.vbuddy__caret {
+  display: inline-block; width: 3px; height: 1em; margin-left: 2px;
+  background: currentColor; vertical-align: -0.12em;
+  animation: vbuddy-caret .8s steps(1) infinite;
+}
+@keyframes vbuddy-caret { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vbuddy__cloud, .vbuddy__dot, .vbuddy__brow { transition-duration: .01s; }
+}
