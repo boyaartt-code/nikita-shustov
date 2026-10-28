@@ -26,8 +26,16 @@
   (S.property || []).forEach((p, idx) => {
     const card = document.createElement('div');
     card.className = 'prop';
-    card.dataset.think = p.think || '';
-    card.dataset.mood = p.mood || 'smile';
+    // реакция человечка — своя, с высоким приоритетом (не перебивается другими мыслями)
+    let lastReact = 0;
+    const react = () => {
+      if (Date.now() - lastReact < 4000) return;
+      lastReact = Date.now();
+      if (p.think) think({ t: p.think, mood: p.mood || 'smile' });
+      if (p.fx === 'hearts') hearts();
+    };
+    card.addEventListener('pointerenter', react);
+    card.addEventListener('click', react);
     card.innerHTML = `
       <h3 class="prop__title" data-split>${esc(p.title)}</h3>
       <div class="prop__fig" style="--d:${-idx * 1.6}s">
@@ -66,14 +74,39 @@
     }, { passive: true });
   }
 
-  // «имущество» в меню: плавно показываем колонку и подсвечиваем её
+  // сердечки над человечком
+  function hearts() {
+    const host = $('.hero__buddy'); if (!host) return;
+    const r = host.getBoundingClientRect();
+    for (let i = 0; i < 9; i++) {
+      const h = document.createElement('span');
+      h.className = 'heart'; h.textContent = ['❤', '♥', '💕'][i % 3];
+      h.style.left = (r.left + r.width * (0.25 + Math.random() * 0.5)) + 'px';
+      h.style.top = (r.top + r.height * 0.32 + scrollY) + 'px';
+      h.style.setProperty('--dx', (Math.random() * 120 - 60).toFixed(0) + 'px');
+      h.style.setProperty('--s', (0.8 + Math.random() * 0.9).toFixed(2));
+      h.style.animationDelay = (i * 0.09).toFixed(2) + 's';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 2600);
+    }
+  }
+
+  // «имущество»: выезжающая панель, скрыта, пока её не откроют
   const propLink = $('[data-property]');
-  if (propLink) propLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    prop.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    prop.classList.remove('is-flash'); void prop.offsetWidth; prop.classList.add('is-flash');
-    think({ t: 'Моё самое ценное — вот оно', mood: 'smile' });
-  });
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'property__close'; closeBtn.setAttribute('aria-label', 'Закрыть имущество');
+  closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  prop.prepend(closeBtn);
+  prop.setAttribute('aria-hidden', 'true'); prop.inert = true;
+  function setProp(open) {
+    document.body.classList.toggle('prop-open', open);
+    prop.setAttribute('aria-hidden', String(!open)); prop.inert = !open;
+    if (propLink) propLink.setAttribute('aria-expanded', String(open));
+    if (open) think({ t: 'Моё самое ценное — вот оно', mood: 'smile' });
+  }
+  if (propLink) propLink.addEventListener('click', (e) => { e.preventDefault(); setProp(!document.body.classList.contains('prop-open')); });
+  closeBtn.addEventListener('click', () => setProp(false));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('prop-open') && document.getElementById('modal').hidden) setProp(false); });
 
 
   // =====================================================================
@@ -473,5 +506,5 @@
 
   // особый день сегодня? человечек поздравляет
   const todays = (S.events || []).filter((e) => e.repeat === 'yearly' ? e.date.slice(5) === ymd(new Date()).slice(5) : e.date === ymd(new Date()));
-  if (todays.length) setTimeout(() => think({ t: todays[0].title.replace(/^День рождения/, 'С днём рождения,').replace(/^Годовщина/, 'Сегодня годовщина'), mood: 'happy' }), 4200);
+  if (todays.length) setTimeout(() => think({ t: todays[0].greet || todays[0].title, mood: 'happy' }), 4200);
 })();
