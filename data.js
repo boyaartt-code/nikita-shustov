@@ -6,8 +6,8 @@ window.SITE = {
   name: 'Никита Шустов',
 
   // Адрес общего сервера (Google Apps Script → «Развернуть» → URL веб-приложения).
-  // Пока пусто — события и заметки сохраняются только в браузере. Инструкция в README.md.
-  api: '',
+  // Если очистить — события и заметки будут сохраняться только в браузере. Инструкция в README.md.
+  api: 'https://script.google.com/macros/s/AKfycbzU7AcPsAKe9H-alF49vCgrhGMlAaskDY5PdPFqN42lVZp-MCYUzTkG4Rfx4SOGU63dHA/exec',
 
   // Колонка «Имущество». Картинки кладите в папку img/ (PNG или WebP без фона).
   property: [
